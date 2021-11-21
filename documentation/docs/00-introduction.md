@@ -18,6 +18,8 @@ You don't need to know Svelte to understand the rest of this guide, but it will 
 
 ### Getting started
 
+Prerequisites: Node.js v14 or higher
+
 The easiest way to start building a SvelteKit app is to run `npm init`:
 
 ```bash
