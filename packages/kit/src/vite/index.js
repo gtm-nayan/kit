@@ -162,6 +162,28 @@ function kit() {
 		};
 	}
 
+	/** @type {Array<() => void>} */
+	let deferred_logs = [];
+	/**
+	 * @param {Record<string, any>} config
+	 * @param {Record<string, any>} resolved_config
+	 * @param {boolean} immediate
+	 */
+	function warn_overridden_config(config, resolved_config, immediate = false) {
+		const overridden = find_overridden_config(config, resolved_config, enforced_config, '', []);
+		if (overridden.length > 0) {
+			const fn = () => {
+				console.log(
+					colors.bold().red('The following Vite config options will be overridden by SvelteKit:')
+				);
+				console.log(overridden.map((key) => `  - ${key}`).join('\n'));
+			};
+
+			if (immediate) fn();
+			else deferred_logs.push(fn);
+		}
+	}
+
 	// TODO remove this for 1.0
 	check_vite_version();
 
@@ -188,7 +210,7 @@ function kit() {
 
 				const new_config = vite_client_build_config();
 
-				warn_overridden_config(config, new_config);
+				warn_overridden_config(config, new_config, true);
 
 				return new_config;
 			}
@@ -387,6 +409,11 @@ function kit() {
 		 * @see https://vitejs.dev/guide/api-plugin.html#configureserver
 		 */
 		async configureServer(vite) {
+			const print_urls = vite.printUrls;
+			vite.printUrls = function () {
+				print_urls.apply(this);
+				deferred_logs.forEach((log) => log());
+			};
 			return await dev(vite, vite_config, svelte_config);
 		},
 
@@ -428,20 +455,6 @@ function collect_output(bundle) {
 		}
 	}
 	return { assets, chunks };
-}
-
-/**
- * @param {Record<string, any>} config
- * @param {Record<string, any>} resolved_config
- */
-function warn_overridden_config(config, resolved_config) {
-	const overridden = find_overridden_config(config, resolved_config, enforced_config, '', []);
-	if (overridden.length > 0) {
-		console.log(
-			colors.bold().red('The following Vite config options will be overridden by SvelteKit:')
-		);
-		console.log(overridden.map((key) => `  - ${key}`).join('\n'));
-	}
 }
 
 /**
