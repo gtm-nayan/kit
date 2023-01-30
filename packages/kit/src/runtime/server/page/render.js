@@ -266,7 +266,6 @@ export async function render_response({
 	if (page_config.csr) {
 		const opts = [
 			`env: ${s(public_env)}`,
-			`paths: ${s({ assets, base })}`,
 			`target: document.querySelector('[data-sveltekit-hydrate="${target}"]').parentNode`,
 			`version: ${s(version)}`
 		];
@@ -290,12 +289,30 @@ export async function render_response({
 			opts.push(`hydrate: {\n\t\t\t\t\t${hydrate.join(',\n\t\t\t\t\t')}\n\t\t\t\t}`);
 		}
 
+		let dyn_base = '';
+		let paths_opt = '';
+
+		if (state.prerendering?.fallback) {
+			paths_opt = `paths: ${s({ base, assets: resolved_assets })}`;
+		} else {
+			const segments = event.url.pathname.slice(base.length).split('/').slice(2);
+			const relative_steps = segments.length > 0 ? segments.map(() => '..').join('/') : '.';
+			dyn_base = `let base = new URL(${s(relative_steps)}, location).pathname.slice(0, -1)`;
+
+			if (assets) {
+				paths_opt = `paths: { base, assets: ${s(assets)}}`;
+			} else {
+				paths_opt = `paths: { base, assets: base }`;
+			}
+		}
+
 		// prettier-ignore
 		const init_app = `
 			import { start } from ${s(prefixed(entry.file))};
 
+			${dyn_base}
 			start({
-				${opts.join(',\n\t\t\t\t')}
+				${[paths_opt, ...opts].join(',\n\t\t\t\t')}
 			});
 		`;
 
