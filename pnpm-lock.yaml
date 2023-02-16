@@ -705,9 +705,11 @@ importers:
       '@sveltejs/kit': workspace:^
       '@sveltejs/site-kit': ^3.1.0
       '@types/d3-geo': ^3.0.2
+      '@types/elasticlunrjs': ^1.0.0
       '@types/node': ^16.18.6
       d3-geo: ^3.0.1
       d3-geo-projection: ^4.0.0
+      elasticlunrjs: ^1.0.1
       flexsearch: ^0.7.31
       magic-string: ^0.27.0
       marked: ^4.2.3
@@ -731,7 +733,9 @@ importers:
       '@sveltejs/kit': link:../../packages/kit
       '@sveltejs/site-kit': 3.1.0
       '@types/d3-geo': 3.0.2
+      '@types/elasticlunrjs': 1.0.0
       '@types/node': 16.18.6
+      elasticlunrjs: 1.0.1
       flexsearch: 0.7.31
       magic-string: 0.27.0
       marked: 4.2.3
@@ -1435,6 +1439,10 @@ packages:
     resolution: {integrity: sha512-DbqK7MLYA8LpyHQfv6Klz0426bQEf7bRTvhMy44sNGVyZoWn//B0c+Qbeg8Osi2Obdc9BLLXYAKpyWege2/7LQ==}
     dependencies:
       '@types/geojson': 7946.0.10
+    dev: true
+
+  /@types/elasticlunrjs/1.0.0:
+    resolution: {integrity: sha512-DpO3XXuhDB7+a/T0I6ndC1bU16cKIMZl7JQfPgG5ZZnMCk9xQuG+i2M1KMlv5J3FwkTaKViVkXgGP95buLTPsw==}
     dev: true
 
   /@types/estree/1.0.0:
@@ -2222,6 +2230,10 @@ packages:
   /dotenv/16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
     engines: {node: '>=12'}
+    dev: true
+
+  /elasticlunrjs/1.0.1:
+    resolution: {integrity: sha512-Si+Y2Kef7AC6UVA0bgSOG20xtszLeUFmk4Yj2C73tP7OuIciwErU4ReQ8nZnT4NoB2JtcI7ia0Dr+HgoxcVFyw==}
     dev: true
 
   /emoji-regex/8.0.0:
