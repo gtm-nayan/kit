@@ -1,4 +1,4 @@
-import { init, search, lookup } from '../search/search.js';
+import { init, search } from '../search/search.js';
 
 addEventListener('message', async (event) => {
 	const { type, payload } = event.data;
@@ -19,8 +19,6 @@ addEventListener('message', async (event) => {
 	}
 
 	if (type === 'recents') {
-		const results = payload.map(lookup).filter(Boolean);
-
-		postMessage({ type: 'recents', payload: results });
+		postMessage({ type: 'recents', payload: [] });
 	}
 });
