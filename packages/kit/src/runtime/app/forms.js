@@ -63,7 +63,8 @@ export function enhance(form, submit = () => {}) {
 				: /** @type {HTMLFormElement} */ (HTMLFormElement.prototype.cloneNode.call(form)).action
 		);
 
-		const data = new FormData(form);
+		/** @type {FormData | string} */
+		let data = new FormData(form);
 
 		const submitter_name = event.submitter?.getAttribute('name');
 		if (submitter_name) {
@@ -89,13 +90,35 @@ export function enhance(form, submit = () => {}) {
 		/** @type {import('types').ActionResult} */
 		let result;
 
+		let encoding = HTMLFormElement.prototype.getAttribute.call(form, 'enctype');
+
+		if (event.submitter?.hasAttribute('formenctype')) {
+			encoding = event.submitter.getAttribute('formenctype');
+		}
+
+		encoding ??= 'application/x-www-form-urlencoded';
+
+		const headers = {
+			accept: 'application/json',
+			'x-sveltekit-action': 'true',
+			'content-type': encoding
+		};
+
+		if (encoding === 'text/plain') {
+			// @ts-expect-error
+			data = await new Blob(data).text();
+		} else if (encoding === 'application/x-www-form-urlencoded') {
+			// @ts-expect-error
+			data = new URLSearchParams(data).toString();
+		} else if (encoding === 'multipart/form-data') {
+			// @ts-expect-error
+			delete headers['content-type'];
+		}
+
 		try {
 			const response = await fetch(action, {
 				method: 'POST',
-				headers: {
-					accept: 'application/json',
-					'x-sveltekit-action': 'true'
-				},
+				headers: headers,
 				cache: 'no-store',
 				body: data,
 				signal: controller.signal
